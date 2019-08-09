@@ -5,6 +5,9 @@
   "main": "index.js",
   "author": "Cleberson F. R. Junior",
   "license": "MIT",
+  "scripts": {
+    "dev": "nodemon src/server.ts"
+  },
   "devDependencies": {
     "@types/body-parser": "^1.17.0",
     "@types/dotenv": "^6.1.1",
