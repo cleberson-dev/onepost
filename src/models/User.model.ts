@@ -1,5 +1,6 @@
 import { Document, Schema, model } from 'mongoose';
 import { isEmail } from 'validator';
+import bcrypt from 'bcrypt';
 import UserInterface from '../interfaces/User.interface';
 import { hasWhitespace, hasNonLatinCharacter } from '../utils';
 
@@ -15,8 +16,7 @@ const UserSchema = new Schema({
   password: {
     type: String,
     required: true,
-    minlength: 8,
-    maxlength: 16
+    minlength: 8
   },
   email: {
     type: String,
@@ -41,6 +41,18 @@ UserSchema.path('email').validate(
   (value): boolean => isEmail(value),
   'Não é um email válido.'
 );
+
+// Gerar hash para senha antes de salvar na DB
+UserSchema.pre('save', async (next): Promise<void> => {
+  bcrypt.hash(this.password, 16.5)
+    .then((hash): void => {
+      this.password = hash;
+      next();
+    })
+    .catch((err): void => {
+      next(err);
+    });
+});
 
 export interface UserModel extends UserInterface, Document { };
 export default model<UserModel>('User', UserSchema);
