@@ -1,5 +1,7 @@
 import { Document, Schema, model } from 'mongoose';
+import { isEmail } from 'validator';
 import UserInterface from '../interfaces/User.interface';
+import { hasWhitespace, hasNonLatinCharacter } from '../utils';
 
 const UserSchema = new Schema({
   username: {
@@ -27,10 +29,22 @@ const UserSchema = new Schema({
   }
 });
 
-// Função para validar espaços em branco
+// Validar espaços em branco no campo do username
 UserSchema.path('username').validate(
-  (value): boolean => !/\s/.test(value),
+  (value): boolean => !hasWhitespace(value),
   'Não é permitido espaços em branco.'
+);
+
+// Validar letras, números e underscores
+UserSchema.path('username').validate(
+  (value): boolean => !hasNonLatinCharacter(value),
+  'Somente é permitido letras, números e underscores (_).'
+);
+
+// Validador para o campo email
+UserSchema.path('email').validate(
+  (value): boolean => isEmail(value),
+  'Não é um email válido.'
 );
 
 export interface UserModel extends UserInterface, Document { };
