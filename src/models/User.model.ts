@@ -1,4 +1,4 @@
-import { Document, Schema, model } from 'mongoose';
+import { Document, Schema, model, HookNextFunction } from 'mongoose';
 import { isEmail } from 'validator';
 import bcrypt from 'bcrypt';
 import UserInterface from '../interfaces/User.interface';
@@ -43,15 +43,19 @@ UserSchema.path('email').validate(
 );
 
 // Gerar hash para senha antes de salvar na DB
-UserSchema.pre('save', async (next): Promise<void> => {
-  bcrypt.hash(this.password, 16.5)
-    .then((hash): void => {
-      this.password = hash;
-      next();
-    })
-    .catch((err): void => {
-      next(err);
-    });
+UserSchema.pre('save', async function (next): Promise<HookNextFunction | void> {
+  if (!this.isModified('password')) {
+    return next();
+  }
+
+  try {
+    const hash = await bcrypt.hash(this.password, 16.5);
+    this.password = hash;
+
+    next();
+  } catch (err) {
+    next(err);
+  };
 });
 
 export interface UserModel extends UserInterface, Document { };
