@@ -58,5 +58,11 @@ UserSchema.pre('save', async function (next): Promise<HookNextFunction | void> {
   };
 });
 
-export interface UserModel extends UserInterface, Document { };
+UserSchema.methods.isValidPassword = function (password: string): boolean {
+  return bcrypt.compareSync(password, this.password);
+};
+
+export interface UserModel extends UserInterface, Document {
+  isValidPassword(password: string): boolean;
+};
 export default model<UserModel>('User', UserSchema);
