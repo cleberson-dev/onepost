@@ -45,6 +45,13 @@
   dependencies:
     "@types/node" "*"
 
+"@types/date-fns@^2.6.0":
+  version "2.6.0"
+  resolved "https://registry.yarnpkg.com/@types/date-fns/-/date-fns-2.6.0.tgz#b062ca46562002909be0c63a6467ed173136acc1"
+  integrity sha1-sGLKRlYgApCb4MY6ZGftFzE2rME=
+  dependencies:
+    date-fns "*"
+
 "@types/dotenv@^6.1.1":
   version "6.1.1"
   resolved "https://registry.yarnpkg.com/@types/dotenv/-/dotenv-6.1.1.tgz#f7ce1cc4fe34f0a4373ba99fefa437b0bec54b46"
@@ -657,6 +664,11 @@ crypto-random-string@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/crypto-random-string/-/crypto-random-string-1.0.0.tgz#a230f64f568310e1498009940790ec99545bca7e"
   integrity sha1-ojD2T1aDEOFJgAmUB5DsmVRbyn4=
+
+date-fns@*, date-fns@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-2.0.0.tgz#52f05c6ae1fe0e395670082c72b690ab781682d0"
+  integrity sha512-nGZDA64Ktq5uTWV4LEH3qX+foV4AguT5qxwRlJDzJtf57d4xLNwtwrfb7SzKCoikoae8Bvxf0zdaEG/xWssp/w==
 
 debug@2.6.9, debug@^2.2.0, debug@^2.3.3, debug@^2.6.8, debug@^2.6.9:
   version "2.6.9"
