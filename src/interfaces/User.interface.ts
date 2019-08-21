@@ -1,7 +1,8 @@
 export default interface UserInterface {
   username: string,
   password: string,
-  email: string
+  email: string,
+  lastPost?: Date
 };
 
 export interface UserInputInterface extends UserInterface {

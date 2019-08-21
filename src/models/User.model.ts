@@ -21,6 +21,10 @@ const UserSchema = new Schema({
   email: {
     type: String,
     unique: true
+  },
+  lastPost: {
+    type: Date,
+    default: null
   }
 });
 
