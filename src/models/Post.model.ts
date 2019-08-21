@@ -18,5 +18,11 @@ const PostSchema = new Schema({
   likes: [String]
 });
 
+// Validação onde evita tais caracteres: <, >, ", / e \
+PostSchema.path('content').validate(
+  (value): boolean => !/[\u003C\u003E\u0022\u002F\u005C]/.test(value),
+  'Caracteres inválidos para publicação.'
+);
+
 export interface PostModel extends PostInterface, Document { };
 export default model<PostModel>('Post', PostSchema);
