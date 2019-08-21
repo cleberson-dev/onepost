@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
 import authRoutes from './routes/auth.routes';
+import postsRoutes from './routes/posts.routes';
 import errorHandlerMiddleware from './middlewares/error.middleware';
 
 dotenv.config();
@@ -24,6 +25,7 @@ db.once('open', (): void => {
 
 // Inserting the routes
 app.use('/auth', authRoutes);
+app.use('/posts', postsRoutes);
 
 // Error handlers
 app.use(errorHandlerMiddleware);
