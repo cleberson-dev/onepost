@@ -20,7 +20,7 @@ const PostSchema = new Schema({
 
 // Validação onde evita tais caracteres: <, >, ", / e \
 PostSchema.path('content').validate(
-  (value): boolean => !/[\u003C\u003E\u0022\u002F\u005C]/.test(value),
+  (value: string): boolean => !/[\u003C\u003E\u0022\u002F\u005C]/.test(value),
   'Caracteres inválidos para publicação.'
 );
 

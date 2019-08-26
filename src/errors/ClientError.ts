@@ -12,9 +12,8 @@ export enum ClientErrors {
 
 class ClientError extends AppError<ClientErrors> {
   public constructor(type: ClientErrors, message: string) {
-    super(type, message);
+    super('ClientError', type, message);
     this.delegateStatusCode();
-    this._name = 'ClientError';
   }
 
   protected delegateStatusCode(): void {

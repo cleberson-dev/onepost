@@ -10,9 +10,8 @@ export enum ValidationErrors {
 
 class ValidationError extends AppError<ValidationErrors> {
   public constructor(type: ValidationErrors, message: string) {
-    super(type, message);
+    super('ValidationError', type, message);
     this.delegateStatusCode();
-    this._name = 'ValidationError';
   }
 
   protected delegateStatusCode(): void {

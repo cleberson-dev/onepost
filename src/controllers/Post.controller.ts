@@ -1,23 +1,26 @@
 import differenceInDays from 'date-fns/differenceInDays';
+import { Schema } from 'mongoose';
 import Post, { PostModel } from '../models/Post.model';
 import ClientError, { ClientErrors } from '../errors/ClientError';
 import ValidationError, { ValidationErrors } from '../errors/ValidationError';
 
 export function createPost(
   content: string,
-  publisher: { username: string, lastPost: Date }
+  publisher: { username: string, lastPost: Date | null }
 ): Promise<PostModel> {
   const newPost = new Post({ content, publisher: publisher.username });
 
   // Os posts de um usuário devem ser publicados em um intervalo maior de 1 dia.
-  if (publisher.lastPost && differenceInDays(newPost.pubDate, publisher.lastPost) === 0) {
-    throw new ClientError(
-      ClientErrors.AlreadyPosted,
-      'Você tem um post de menos de 24hrs atrás. Tente novamente mais tarde.'
-    );
+  if (publisher.lastPost) {
+    if (differenceInDays(publisher.lastPost, publisher.lastPost) === 0) {
+      throw new ClientError(
+        ClientErrors.AlreadyPosted,
+        'Você tem um post de menos de 24hrs atrás. Tente novamente mais tarde.'
+      );
+    }
   }
 
-  return newPost.save().then((post) => post);
+  return newPost.save().then((post): PostModel => post);
 };
 
 export function deletePost(postId: string, username: string): Promise<any> {
@@ -84,7 +87,7 @@ export function getPosts(ammount: number, startPosition: number): Promise<PostMo
     })));
 }
 
-export function getPost(postId: string): Promise<PostModel> {
+export function getPost(postId: Schema.Types.ObjectId): Promise<PostModel> {
   return Post.findById(postId)
     .then((post): PostModel => {
       if (!post) throw new ClientError(ClientErrors.NotFound, 'Post não encontrado');

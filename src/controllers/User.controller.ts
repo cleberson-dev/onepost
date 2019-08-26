@@ -1,7 +1,6 @@
 import jwt from 'jsonwebtoken';
 import User from '../models/User.model';
-import { UserInputInterface } from '../interfaces/User.interface';
-import { UserRequestData } from '../interfaces/Request.interface';
+import { UserInputInterface, UserRequestData } from '../interfaces/User.interface';
 import ClientError, { ClientErrors } from '../errors/ClientError';
 import ValidationError, { ValidationErrors } from '../errors/ValidationError';
 
@@ -14,6 +13,8 @@ function loginUser(username: string, password: string): Promise<string> {
           'Nome de usuário/Senha inválido.'
         );
       }
+
+      if (!process.env.SECRET) throw new Error('Erro interno');
 
       const payload: UserRequestData = {
         username: user.username
@@ -28,11 +29,18 @@ function loginUser(username: string, password: string): Promise<string> {
 function registerUser(userInput: UserInputInterface): Promise<string> {
   const { username, email, password, password2 } = userInput;
 
-  if (password !== password2) throw new ValidationError(ValidationErrors.PasswordsDontMatch, 'As senhas não batem');
+  if (password !== password2) {
+    throw new ValidationError(
+      ValidationErrors.PasswordsDontMatch,
+      'As senhas não batem'
+    );
+  }
 
   const newUser = new User({ username, email, password });
   return newUser.save()
     .then((user): string => {
+      if (!process.env.SECRET) throw new Error('Erro interno');
+
       const payload: UserRequestData = {
         username: user.username
       };
@@ -44,12 +52,22 @@ function registerUser(userInput: UserInputInterface): Promise<string> {
     });
 };
 
-function changeLastPostDate(username: string, date: Date) {
-  return User.findOneAndUpdate({ username }, { $set: { lastPost: date } });
+function changeLastPostDate(username: string, date: Date): Promise<{ ok: boolean }> {
+  return User
+    .findOneAndUpdate({ username }, { $set: { lastPost: date } })
+    .then((user): { ok: boolean } => {
+      if (!user) throw new Error('Usuário não encontrado');
+
+      return { ok: true };
+    });
 }
 
-function getUserLastPostDate(username: string): Promise<Date> {
-  return User.findOne({ username }).then(user => user.lastPost);
+function getUserLastPostDate(username: string): Promise<Date | null> {
+  return User.findOne({ username }).then((user): Date | null => {
+    if (!user) throw new Error('Usuário não encontrado');
+
+    return user.lastPost || null;
+  });
 }
 
 export default {

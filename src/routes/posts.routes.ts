@@ -3,7 +3,7 @@ import authMiddleware from '../middlewares/auth.middleware';
 import PostController from '../controllers/Post.controller';
 import UserController from '../controllers/User.controller';
 import WordController from '../controllers/Word.controller';
-import UserRequest from '../interfaces/Request.interface';
+import { UserRequestData } from '../interfaces/User.interface';
 import ClientError, { ClientErrors } from '../errors/ClientError';
 
 const postsRoutes = Router();
@@ -22,11 +22,13 @@ postsRoutes.get('/', (req: Request, res: Response, next: NextFunction): Promise<
 });
 
 // POST '/' -> Create new post
-postsRoutes.post('/', authMiddleware, async (req: UserRequest, res: Response, next: NextFunction): Promise<Response | void> => {
+postsRoutes.post('/', authMiddleware, async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
   const { content } = req.body;
-  const { user } = req;
+  const user = req.user as UserRequestData;
 
   try {
+    if (!user) throw Error('Erro Interno');
+
     const userLastPostDate = await UserController.getUserLastPostDate(user.username);
     const post = await PostController.createPost(content, { username: user.username, lastPost: userLastPostDate })
     await WordController.addPostReferences(post);
@@ -40,9 +42,11 @@ postsRoutes.post('/', authMiddleware, async (req: UserRequest, res: Response, ne
 });
 
 // PATCH '/:postId' -> Update some existing post (Options: 'like')
-postsRoutes.patch('/:postId', authMiddleware, async (req: UserRequest, res: Response, next: NextFunction): Promise<void> => {
+postsRoutes.patch('/:postId', authMiddleware, async (req: Request, res: Response, next: NextFunction): Promise<any> => {
   const { postId } = req.params || '';
-  const { user } = req;
+  const user = req.user as UserRequestData;
+
+  if (!user) next(new Error('Erro interno'));
 
   switch (req.body.type) {
     case 'like':
@@ -63,11 +67,13 @@ postsRoutes.patch('/:postId', authMiddleware, async (req: UserRequest, res: Resp
 });
 
 // DELETE '/:postId' -> Delete a user's post.
-postsRoutes.delete('/:postId', authMiddleware, async (req: UserRequest, res: Response, next: NextFunction): Promise<Response | void> => {
+postsRoutes.delete('/:postId', authMiddleware, async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
   const { postId } = req.params;
   const { user } = req;
 
   try {
+    if (!user) throw new Error('Erro interno.');
+
     const post = await PostController.deletePost(postId, user.username);
 
     // As referências do post na coleção de palavras devem ser removidas.

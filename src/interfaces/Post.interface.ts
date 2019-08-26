@@ -4,6 +4,6 @@ export default interface PostInterface {
   postId: Schema.Types.ObjectId,
   content: string,
   publisher: string,
-  pubDate?: Date,
+  pubDate: Date,
   likes: string[]
 };

@@ -30,19 +30,19 @@ const UserSchema = new Schema({
 
 // Validar espaços em branco no campo do username
 UserSchema.path('username').validate(
-  (value): boolean => !hasWhitespace(value),
+  (value: string): boolean => !hasWhitespace(value),
   'Não é permitido espaços em branco.'
 );
 
 // Validar letras, números e underscores
 UserSchema.path('username').validate(
-  (value): boolean => !hasNonLatinCharacter(value),
+  (value: string): boolean => !hasNonLatinCharacter(value),
   'Somente é permitido letras, números e underscores (_).'
 );
 
 // Validador para o campo email
 UserSchema.path('email').validate(
-  (value): boolean => isEmail(value),
+  (value: string): boolean => isEmail(value),
   'Não é um email válido.'
 );
 

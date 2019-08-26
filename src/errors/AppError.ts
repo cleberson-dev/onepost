@@ -7,9 +7,11 @@ abstract class AppError<T> {
 
   public message: string;
 
-  public constructor(type: T, message: string) {
+  public constructor(name: string, type: T, message: string) {
+    this._name = name;
     this.message = message;
     this._type = type;
+    this._status = 400;
   }
 
   protected abstract delegateStatusCode(): void;
