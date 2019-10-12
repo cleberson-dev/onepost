@@ -23,7 +23,7 @@ postsRoutes.get('/', (req: Request, res: Response, next: NextFunction): Promise<
 
 // POST '/' -> Create new post
 postsRoutes.post('/', authMiddleware, async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
-  const { content } = req.body;
+  const { content } = req.body.data;
   const user = req.user as UserRequestData;
 
   try {
@@ -41,28 +41,20 @@ postsRoutes.post('/', authMiddleware, async (req: Request, res: Response, next: 
   }
 });
 
-// PATCH '/:postId' -> Update some existing post (Options: 'like')
-postsRoutes.patch('/:postId', authMiddleware, async (req: Request, res: Response, next: NextFunction): Promise<any> => {
+// PATCH '/:postId/likes' -> Update some existing post (Options: 'like')
+postsRoutes.patch('/:postId/likes', authMiddleware, async (req: Request, res: Response, next: NextFunction): Promise<any> => {
   const { postId } = req.params || '';
   const user = req.user as UserRequestData;
 
   if (!user) next(new Error('Erro interno'));
 
-  switch (req.body.type) {
-    case 'like':
-      PostController.likePost(postId, user.username)
-        .then((data): void => {
-          res.status(200);
-          res.send({ success: true });
-          next();
-        })
-        .catch(next);
-      break;
-    default:
-      next(new ClientError(
-        ClientErrors.MalformedRequest,
-        'Deve informar o tipo de alteração no corpo da requisição.'
-      ));
+  try {
+    await PostController.likePost(postId, user.username);
+    res.status(200);
+    res.send({ success: true });
+    next();
+  } catch (err) {
+    next(err);
   }
 });
 
