@@ -10,7 +10,7 @@ const postsRoutes = Router();
 
 // GET '/' -> Get limited number of posts sorted by publication date.
 postsRoutes.get('/', (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
-  const ammount = req.body.ammount || 20;
+  const ammount = req.body.ammount || 15;
   const start = req.body.start || 0;
 
   return PostController.getPosts(ammount, start)
@@ -23,7 +23,7 @@ postsRoutes.get('/', (req: Request, res: Response, next: NextFunction): Promise<
 
 // POST '/' -> Create new post
 postsRoutes.post('/', authMiddleware, async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
-  const { content } = req.body.data;
+  const { content } = req.body;
   const user = req.user as UserRequestData;
 
   try {
