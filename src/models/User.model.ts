@@ -1,5 +1,6 @@
 import { Document, Schema, model, HookNextFunction } from 'mongoose';
 import { isEmail } from 'validator';
+import uniqueValidator from 'mongoose-unique-validator';
 import bcrypt from 'bcrypt';
 import UserInterface from '../interfaces/User.interface';
 import { hasWhitespace, hasNonLatinCharacter } from '../utils';
@@ -65,6 +66,9 @@ UserSchema.pre('save', async function (next): Promise<HookNextFunction | void> {
 UserSchema.methods.isValidPassword = function (password: string): boolean {
   return bcrypt.compareSync(password, this.password);
 };
+
+// 3rd party unique validator -- Devolve um erro de validação ao invés de um erro E11000.
+UserSchema.plugin(uniqueValidator);
 
 export interface UserModel extends UserInterface, Document {
   isValidPassword(password: string): boolean;
