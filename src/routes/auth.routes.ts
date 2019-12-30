@@ -10,19 +10,19 @@ authRoutes.post('/register', (req: Request, res: Response, next: NextFunction): 
   return UserController.registerUser({ username, email, password, password2 })
     .then((token): Response => {
       res.status(200);
-      return res.json({ success: true, token });
+      return res.json({ success: true, token, user: { username } });
     })
     .catch(next);
 });
 
-// GET '/login' -> Authenticate user and generate token.
-authRoutes.get('/login', (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
+// POST '/login' -> Authenticate user and generate token.
+authRoutes.post('/login', (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
   const { username, password } = req.body;
 
   return UserController.loginUser(username, password)
     .then((token): Response => {
       res.status(200);
-      return res.json({ success: true, token });
+      return res.json({ success: true, token, user: { username } });
     })
     .catch(next);
 });
