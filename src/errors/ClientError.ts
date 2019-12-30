@@ -7,10 +7,11 @@ export enum ClientErrors {
   InvalidToken = 'INVALID_TOKEN',
   TokenRequired = 'TOKEN_REQUIRED',
   MalformedRequest = 'MALFORMED_REQUEST',
-  AlreadyPosted = 'ALREADY_POSTED'
+  AlreadyPosted = 'ALREADY_POSTED',
+  OutOfRange = 'OUT_OF_RANGE'
 };
 
-class ClientError extends AppError<ClientErrors> {
+class ClientError extends AppError {
   public constructor(type: ClientErrors, message: string) {
     super('ClientError', type, message);
     this.delegateStatusCode();

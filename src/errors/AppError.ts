@@ -1,13 +1,18 @@
-abstract class AppError<T> {
+import { ClientErrors } from './ClientError';
+import { ValidationErrors } from './ValidationError';
+
+export type ErrorTypes = ClientErrors | ValidationErrors;
+
+abstract class AppError {
   protected _name: string;
 
   protected _status: number;
 
-  protected _type: T;
+  protected _type: ErrorTypes;
 
   public message: string;
 
-  public constructor(name: string, type: T, message: string) {
+  public constructor(name: string, type: ErrorTypes, message: string) {
     this._name = name;
     this.message = message;
     this._type = type;

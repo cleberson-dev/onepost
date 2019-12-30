@@ -5,13 +5,27 @@ export enum ValidationErrors {
   MissingParameter = 'MISSING_PARAMETER',
   OutOfRange = 'OUT_OF_RANGE',
   InvalidType = 'INVALID_TYPE',
-  PasswordsDontMatch = 'PASSWORDS_DONT_MATCH'
+  PasswordsDontMatch = 'PASSWORDS_DONT_MATCH',
+  IncorrectUsernamePassword = 'INCORRECT_USERNAME_PASSWORD',
+  ValidationError = 'VALIDATION_ERROR'
 }
 
-class ValidationError extends AppError<ValidationErrors> {
-  public constructor(type: ValidationErrors, message: string) {
-    super('ValidationError', type, message);
+interface FieldError {
+  name: string;
+  message: string;
+}
+
+class ValidationError extends AppError {
+  private _fields: FieldError[];
+
+  public constructor(type: ValidationErrors, fields: FieldError[]) {
+    super('ValidationError', type, 'Erro de Validação');
     this.delegateStatusCode();
+    this._fields = fields;
+  }
+
+  public get fields(): FieldError[] {
+    return this._fields;
   }
 
   protected delegateStatusCode(): void {

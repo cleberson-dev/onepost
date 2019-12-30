@@ -1,16 +1,21 @@
 import jwt from 'jsonwebtoken';
 import User from '../models/User.model';
 import { UserInputInterface, UserRequestData } from '../interfaces/User.interface';
-import ClientError, { ClientErrors } from '../errors/ClientError';
 import ValidationError, { ValidationErrors } from '../errors/ValidationError';
 
 function loginUser(username: string, password: string): Promise<string> {
   return User.findOne({ username })
     .then((user): string => {
-      if (!user || !user.isValidPassword(password)) {
-        throw new ClientError(
-          ClientErrors.InvalidUsernamePassword,
-          'Nome de usuário/Senha inválido.'
+      if (!user) {
+        throw new ValidationError(
+          ValidationErrors.IncorrectUsernamePassword,
+          [{ name: 'username', message: 'Nome de usuário incorreto.' }]
+        );
+      }
+      if (!user.isValidPassword(password)) {
+        throw new ValidationError(
+          ValidationErrors.IncorrectUsernamePassword,
+          [{ name: 'password', message: 'Senha incorreta.' }]
         );
       }
 
@@ -23,7 +28,13 @@ function loginUser(username: string, password: string): Promise<string> {
         expiresIn: '1 day'
       });
       return token;
-    });
+    }).catch((err) => {
+      const fieldErrors = Object.entries(err.errors).map(([errKey, errObj]) => (
+        { name: errKey, message: errObj.message }
+      ));
+
+      throw new ValidationError(ValidationErrors.ValidationError, fieldErrors);
+    });;
 };
 
 function registerUser(userInput: UserInputInterface): Promise<string> {
@@ -32,7 +43,7 @@ function registerUser(userInput: UserInputInterface): Promise<string> {
   if (password !== password2) {
     throw new ValidationError(
       ValidationErrors.PasswordsDontMatch,
-      'As senhas não batem'
+      [{ name: 'password2', message: 'Senha inválida.' }]
     );
   }
 
@@ -49,6 +60,12 @@ function registerUser(userInput: UserInputInterface): Promise<string> {
       });
 
       return token;
+    }).catch((err) => {
+      const fieldErrors = Object.entries(err.errors).map(([errKey, errObj]) => (
+        { name: errKey, message: errObj.message }
+      ));
+
+      throw new ValidationError(ValidationErrors.ValidationError, fieldErrors);
     });
 };
 
