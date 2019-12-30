@@ -2,6 +2,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
+import cors from 'cors';
 import authRoutes from './routes/auth.routes';
 import postsRoutes from './routes/posts.routes';
 import wordsRoutes from './routes/words.routes';
@@ -13,6 +14,7 @@ const app: express.Application = express();
 
 // Middlewares
 app.use(bodyParser.json());
+app.use(cors());
 
 // Initializing DB
 const MONGODB_URL = process.env.MONGODB_URL || 'mongodb://localhost:27017/onepost';
