@@ -87,7 +87,7 @@ async function getTopTenWords(): Promise<object> {
   const words = await Word.find();
   return words
     .map(word => ({
-      word: word.word,
+      name: word.word,
       count: word.posts.length
     }))
     .sort((a, b) => b.count - a.count)
