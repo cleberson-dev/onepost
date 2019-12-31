@@ -1,14 +1,16 @@
 import styled from 'styled-components';
 
 export const Container = styled.div`
-  font-family: 'Livvic', sans-serif;
-  background-color: #0E103D;
-  color: #F2D7EE;
-  width: 100%;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #F2F2F2;
+  color: black;
+  padding: 1em;
+  box-sizing: border-box;
   height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 `;
 
-export const Header = styled.header``;
+export const ContentArea = styled.div`
+  width: 100%;
+  height: 100%;
+  position: relative;
+`;
