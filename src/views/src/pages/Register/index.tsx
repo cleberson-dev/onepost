@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import axios from 'axios';
 
 import { RegisterContainer, FormContainer, RegisterButton } from './styles';
 
@@ -11,8 +10,7 @@ import FormGroup from '../../components/FormGroup';
 import LoadingModal from '../../components/LoadingModal';
 
 import { AppState } from '../../store';
-import { UserThunkDispatcher } from '../../store/user/actions';
-import { REGISTER_USER, REGISTER_USER_SUCCESS, REGISTER_USER_FAIL } from '../../store/user/types';
+import { registerUser } from '../../store/user/actions';
 
 import { registerUserValidator } from '../../validators/User.validator';
 import FieldError from '../../interfaces/FieldError.interface';
@@ -46,34 +44,6 @@ function Register() {
 
 
 
-  const registerUserAction = 
-    (username: string, password: string, password2: string, email: string) => 
-    (dispatch: UserThunkDispatcher) => {
-    dispatch({ type: REGISTER_USER });
-
-    axios
-      .post('http://localhost:8080/auth/register', { username, password, password2, email }, {
-        headers: {
-          'Content-Type': 'application/json',
-        }
-      })
-      .then((res) => {
-        const { token, user } = res.data;
-        sessionStorage.setItem('token', token);
-        sessionStorage.setItem('user.username', user.username);
-
-        dispatch({ type: REGISTER_USER_SUCCESS, payload: { username: user.username } });
-
-        history.replace('/');
-      })
-      .catch((err) => {
-        const { fields } = err.response.data;
-        dispatch({ 
-          type: REGISTER_USER_FAIL,
-          payload: fields
-        });
-      });
-  };
 
   const onSubmitHandler: React.FormEventHandler = (e) => {
     e.preventDefault();
@@ -85,7 +55,12 @@ function Register() {
       return;
     }
 
-    dispatch(registerUserAction(username, password, password2, email));
+    dispatch(
+      registerUser(
+        history, 
+        { username, password, password2, email }
+      )
+    );
   };
   
   return (
