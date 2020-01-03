@@ -2,7 +2,6 @@ import differenceInDays from 'date-fns/differenceInDays';
 import { Schema } from 'mongoose';
 import Post, { PostModel } from '../models/Post.model';
 import ClientError, { ClientErrors } from '../errors/ClientError';
-import ValidationError, { ValidationErrors } from '../errors/ValidationError';
 
 export function createPost(
   content: string,
@@ -46,7 +45,7 @@ export function likePost(postId: string, username: string): Promise<any> {
       if (!post) throw new ClientError(ClientErrors.NotFound, 'Post não encontrado.');
 
       /*
-        O username (gerado por token) será removido ou adicionado
+        O username (gerado por token) deverá ser removido ou adicionado
         dependente da sua existência na lista de curtidas do post.
       */
       const { likes } = post;
@@ -67,8 +66,8 @@ export function getPostsByUser(username: string): Promise<PostModel[]> {
 export function getPosts(ammount: number, startPosition: number): Promise<PostModel[]> {
   const maxAmmount = 15;
   if (ammount > maxAmmount) {
-    throw new ValidationError(
-      ValidationErrors.OutOfRange,
+    throw new ClientError(
+      ClientErrors.OutOfRange,
       `Excedeu a quantidade máxima de posts (máx: ${maxAmmount})`
     );
   }
@@ -83,7 +82,7 @@ export function getPosts(ammount: number, startPosition: number): Promise<PostMo
       content: post.content,
       publisher: post.publisher,
       pubDate: post.pubDate,
-      likes: post.likes.length // ao invés das referências, será um contador de curtidas
+      likes: post.likes // ao invés das referências, será um contador de curtidas
     })));
 }
 
