@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-// import axios from 'axios';
 
 import { LoginContainer, FormContainer, LoginTitle } from './styles';
 
@@ -12,8 +11,6 @@ import LoadingModal from '../../components/LoadingModal';
 
 import { AppState } from '../../store';
 import { loginUser } from '../../store/user/actions';
-// import { UserThunkDispatcher } from '../../store/user/actions';
-// import { LOGIN_USER, LOGIN_USER_SUCCESS, LOGIN_USER_FAIL } from '../../store/user/types';
 
 import { loginUserValidator } from '../../validators/User.validator';
 import FieldError from '../../interfaces/FieldError.interface';
