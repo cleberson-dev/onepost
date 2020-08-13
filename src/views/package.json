@@ -21,7 +21,7 @@
     "react-scripts": "3.1.1",
     "redux": "^4.0.4",
     "redux-thunk": "^2.3.0",
-    "serialize-javascript": "2.1.1",
+    "serialize-javascript": "3.1.0",
     "styled-components": "^4.3.2",
     "typescript": "3.5.3",
     "validate": "^5.1.0",
